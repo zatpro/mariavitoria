@@ -1,0 +1,490 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>O Teste de Amor da Maria Vitória ❤️</title>
+    <!-- Tailwind CSS para um design lindo, moderno e responsivo -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts para fontes românticas e modernas -->
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #ffeef2 0%, #ffd1dc 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+        .font-romantica {
+            font-family: 'Caveat', cursive;
+        }
+        .main-card {
+            z-index: 10;
+            position: relative;
+        }
+        /* Efeito de pulsação na foto */
+        @keyframes romanticPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 15px rgba(244, 63, 94, 0.4); }
+            50% { transform: scale(1.05); box-shadow: 0 0 25px rgba(244, 63, 94, 0.8); }
+        }
+        .pulsing-photo {
+            animation: romanticPulse 3s infinite ease-in-out;
+        }
+        /* Animação para feedback */
+        @keyframes popIn {
+            0% { transform: scale(0.9); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .pop-animation {
+            animation: popIn 0.3s ease-out forwards;
+        }
+
+        /* Efeito de corações flutuantes usando CSS puro (Sem Canvas) */
+        .floating-heart {
+            position: absolute;
+            bottom: -50px;
+            font-size: 24px;
+            pointer-events: none;
+            animation: floatUp 6s linear infinite;
+            opacity: 0;
+            z-index: 1;
+        }
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) translateX(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.8;
+            }
+            90% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-105vh) translateX(50px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center p-4 min-h-screen">
+
+    <!-- Container dos Corações de Fundo -->
+    <div id="heart-container" class="absolute inset-0 overflow-hidden pointer-events-none"></div>
+
+    <!-- Card Principal do Site -->
+    <div class="main-card w-full max-w-lg bg-white/95 backdrop-blur-sm shadow-2xl rounded-3xl border-2 border-rose-200 p-6 md:p-8 text-center transition-all duration-500 my-4">
+        
+        <!-- Cabeçalho -->
+        <header class="mb-4">
+            <h1 class="font-romantica text-5xl text-rose-600 font-bold mb-1">Maria Vitória</h1>
+            <p class="text-rose-400 font-bold text-xs tracking-widest uppercase">Razão de Todo o Meu Amor</p>
+        </header>
+
+        <!-- Foto Central da Maria Vitória -->
+        <div class="relative w-40 h-40 mx-auto mb-4">
+            <div class="w-full h-full rounded-full overflow-hidden border-4 border-rose-500 pulsing-photo bg-rose-100 flex items-center justify-center">
+                <img id="love-photo" src="5ed7eea6dfaf43fe96ae8ee665df4588.png" alt="Maria Vitória" class="w-full h-full object-cover" onerror="handleImageError()">
+            </div>
+            <span class="absolute bottom-1 right-2 bg-rose-500 text-white rounded-full p-2 shadow-lg text-lg animate-bounce">❤️</span>
+        </div>
+
+        <!-- DECLARAÇÕES DINÂMICAS: Falo que te amo quase toda hora! -->
+        <div class="bg-rose-50 border border-rose-100 rounded-2xl py-2 px-4 mb-4">
+            <p id="spammed-love" class="text-rose-600 font-extrabold text-sm transition-all duration-300">
+                Alerta: Eu te amo demais! ❤️
+            </p>
+        </div>
+
+        <!-- Painel de Jogo -->
+        <div id="game-zone" class="min-h-[280px] flex flex-col justify-center">
+            
+            <!-- TELA 1: Boas-vindas -->
+            <div id="screen-intro" class="space-y-4">
+                <h2 class="text-lg md:text-xl font-extrabold text-gray-800">Você aceita fazer o teste do nosso amor? 😍</h2>
+                <p class="text-gray-600 text-sm leading-relaxed">
+                    Eu fiz esse joguinho inspirado no famoso <span class="text-rose-500 font-bold">twomates</span> especialmente para você. Quero provar o quanto você me conhece e o quanto meu amor por você é gigantesco!
+                </p>
+                <button onclick="startGame()" class="w-full bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white font-bold py-3 px-6 rounded-full shadow-lg transform transition active:scale-95 text-lg">
+                    Iniciar Teste! 💘
+                </button>
+            </div>
+
+            <!-- TELA 2: Quiz com Barra de Porcentagem (Termômetro do Amor) -->
+            <div id="screen-quiz" class="hidden space-y-4">
+                
+                <!-- Termômetro de Amor (Estilo Porcentagem Clássica) -->
+                <div class="space-y-1">
+                    <div class="flex justify-between items-center text-xs font-extrabold text-rose-500">
+                        <span>💖 Nível do Nosso Amor:</span>
+                        <span id="love-percent-text" class="text-sm bg-rose-100 px-2.5 py-0.5 rounded-full">0%</span>
+                    </div>
+                    <div class="w-full bg-rose-100 rounded-full h-4 overflow-hidden border border-rose-200">
+                        <div id="love-percent-bar" class="bg-gradient-to-r from-pink-500 to-rose-600 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center text-xs text-rose-400 font-bold">
+                    <span id="quiz-counter">Pergunta 1 de 10</span>
+                    <span id="quiz-attempts">Tentativas: 1</span>
+                </div>
+
+                <!-- Pergunta do Quiz -->
+                <h3 id="quiz-question" class="text-base md:text-lg font-bold text-gray-800 my-1">...</h3>
+
+                <!-- Botões de Opção -->
+                <div id="quiz-options" class="space-y-2">
+                    <!-- Gerados dinamicamente via JS -->
+                </div>
+
+                <!-- Mensagem de Feedback -->
+                <div id="quiz-feedback" class="text-xs md:text-sm font-bold h-10 flex items-center justify-center transition-all px-2 text-center"></div>
+            </div>
+
+            <!-- TELA 3: Vitória / Resultado de 100% -->
+            <div id="screen-victory" class="hidden space-y-4 pop-animation">
+                <div class="text-rose-500 text-5xl">🏆💖🥇</div>
+                <h2 class="font-romantica text-4xl font-bold text-rose-600">Marcamos 100% de Amor!</h2>
+                
+                <p class="text-gray-700 text-xs md:text-sm leading-relaxed text-justify px-2">
+                    Maria Vitória, você passou com nota máxima! Eu criei esse joguinho de coração para arrancar um belo sorriso seu e te deixar bem claro que você é a única dona do meu coração. Cada pedacinho de mim ama muito você, seu sorriso e o fato de ter você na minha vida.
+                </p>
+
+                <!-- Contador de Amor -->
+                <div class="bg-rose-50 border-2 border-dashed border-rose-300 rounded-2xl p-4 space-y-2">
+                    <p class="text-xs text-rose-400 font-bold uppercase tracking-wider">Quantidade de Amor Enviada</p>
+                    <p id="love-counter-display" class="text-3xl font-extrabold text-rose-600">100 Vezes ❤️</p>
+                    <button onclick="sendMoreLove()" class="w-full bg-rose-500 hover:bg-rose-600 text-white font-bold py-2 px-4 rounded-full transition transform active:scale-95 shadow text-sm">
+                        Mandar mais um "Te Amo muito!" 💕
+                    </button>
+                </div>
+
+                <div class="pt-2">
+                    <p class="font-romantica text-3xl text-rose-500 font-semibold">"Eu te amo ontem, te amo hoje, te amo amanhã... Te amo quase toda hora!" 👑💍</p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Rodapé Romântico -->
+        <footer class="mt-6 pt-4 border-t border-rose-100 flex justify-between items-center text-[10px] md:text-xs text-rose-400">
+            <span>Para o amor da minha vida: Maria Vitória 😍</span>
+            <span class="animate-pulse">❤️</span>
+        </footer>
+
+    </div>
+
+    <!-- Script de lógica interativa -->
+    <script>
+        // Caso a foto não carregue no ambiente de teste, gera um avatar de coração estilizado
+        function handleImageError() {
+            const img = document.getElementById('love-photo');
+            img.src = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23f43f5e'><path d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/></svg>";
+        }
+
+        // Lista de frases apaixonadas que mudam constantemente
+        const frasesDeAmor = [
+            "Eu te amo infinitamente, Maria Vitória! ❤️",
+            "Maria Vitória, você é o amor da minha vida! 🥰",
+            "Você brilha mais do que qualquer estrela! 😍",
+            "Já te falei que te amo agora pouco? Te amo demais! 💕",
+            "Meu peito bate forte só por você! 👑",
+            "Amo cada pedacinho do seu ser! 💍",
+            "Não canso de repetir: TE AMO! 💞"
+        ];
+
+        // Alterna as declarações no topo do card a cada 4 segundos
+        setInterval(() => {
+            const display = document.getElementById('spammed-love');
+            if (display) {
+                const randomFrase = frasesDeAmor[Math.floor(Math.random() * frasesDeAmor.length)];
+                display.style.opacity = '0';
+                setTimeout(() => {
+                    display.innerText = randomFrase;
+                    display.style.opacity = '1';
+                }, 300);
+            }
+        }, 4000);
+
+        // Banco de perguntas (10 Perguntas focadas em amor puro)
+        const quizData = [
+            {
+                pergunta: "Quem é que te ama mais do que qualquer pessoa no mundo?",
+                opcoes: [
+                    "Eu, com certeza absoluta!",
+                    "Ninguém",
+                    "Apenas os seus amigos"
+                ],
+                correta: 0,
+                certaMsg: "Isso mesmo! Meu peito bate forte só pensando em você! 🥰",
+                erradaMsg: "Lógico que sou eu! Tente de novo! ❤️"
+            },
+            {
+                pergunta: "Qual é o tamanho do meu amor por você, Maria Vitória?",
+                opcoes: [
+                    "Normal, igual a todo mundo",
+                    "Do tamanho do planeta Terra",
+                    "Infinito multiplicado pelo infinito!"
+                ],
+                correta: 2,
+                certaMsg: "Exatamente! Meu amor por você não cabe no universo! 🚀🌌",
+                erradaMsg: "É muuuito maior do que isso! Escolha a resposta máxima! 🥰"
+            },
+            {
+                pergunta: "O que eu sinto quando ouço a sua voz ou vejo você?",
+                opcoes: [
+                    "Fico muito feliz e meu coração dispara!",
+                    "Não sinto nada demais",
+                    "Apenas fico tranquilo"
+                ],
+                correta: 0,
+                certaMsg: "Sim! Você transforma o meu dia em um segundo! 💞",
+                erradaMsg: "Você sabe que mexe demais comigo! Tente de novo! 😍"
+            },
+            {
+                pergunta: "Qual é o meu plano perfeito para o futuro?",
+                opcoes: [
+                    "Ficar bem longe de tudo",
+                    "Estar ao seu lado cuidando de você sempre",
+                    "Apenas deixar as coisas acontecerem"
+                ],
+                correta: 1,
+                certaMsg: "Com certeza! Minha maior felicidade é estar com você! 💍",
+                erradaMsg: "Meu futuro perfeito só faz sentido se você estiver nele! Tente novamente! 😘"
+            },
+            {
+                pergunta: "Se eu pudesse te dar qualquer presente no mundo hoje, o que seria?",
+                opcoes: [
+                    "Apenas coisas materiais",
+                    "Todo o amor, proteção e carinho do mundo!",
+                    "Uma lembrancinha boba"
+                ],
+                correta: 1,
+                certaMsg: "Com certeza! Minha missão é te ver feliz e protegida! 💝",
+                erradaMsg: "Eu quero te dar o melhor do meu sentimento! Tente de novo!"
+            },
+            {
+                pergunta: "Quantas vezes por dia eu penso em você?",
+                opcoes: [
+                    "24 horas por dia, sem parar!",
+                    "Só algumas vezes",
+                    "Raramente"
+                ],
+                correta: 0,
+                certaMsg: "Sim! Você é meu pensamento favorito do dia! 🧠❤️",
+                erradaMsg: "Penso em você a todo instante! Selecione a opção máxima!"
+            },
+            {
+                pergunta: "O que eu mais quero fazer toda vez que te vejo?",
+                opcoes: [
+                    "Te dar um abraço bem apertado e dizer o quanto te amo",
+                    "Apenas dizer oi de longe",
+                    "Continuar fazendo minhas coisas"
+                ],
+                correta: 0,
+                certaMsg: "Isso! Quero segurar sua mão e não soltar nunca mais! 🤗💖",
+                erradaMsg: "Meu coração quer muito carinho e proximidade com você! Escolha outra!"
+            },
+            {
+                pergunta: "O que torna o meu dia completamente feliz?",
+                opcoes: [
+                    "Ganhar na loteria",
+                    "Saber que você está bem e feliz do meu lado",
+                    "Assistir um jogo de futebol"
+                ],
+                correta: 1,
+                certaMsg: "Verdade! Sua felicidade é a minha felicidade, Maria Vitória! 😍",
+                erradaMsg: "O motivo do meu sorriso diário é você! Tente outra vez!"
+            },
+            {
+                pergunta: "Como eu me sinto por ter você na minha vida?",
+                opcoes: [
+                    "A pessoa mais sortuda do mundo inteiro!",
+                    "Normal, sem grandes sentimentos",
+                    "Me sinto indiferente"
+                ],
+                correta: 0,
+                certaMsg: "Sem dúvida! Ter você é o meu maior privilégio! 💎✨",
+                erradaMsg: "Eu sou extremamente feliz por ter você! Escolha a primeira opção!"
+            },
+            {
+                pergunta: "Qual é a única certeza que eu quero que você guarde no peito?",
+                opcoes: [
+                    "Que nosso amor é incerto",
+                    "Que eu amo muito você e quero te fazer a mulher mais feliz do mundo!",
+                    "Que as coisas mudam rápido"
+                ],
+                correta: 1,
+                certaMsg: "SIIIIM! Nunca se esqueça disso: eu te amo infinitamente! 👑💍",
+                erradaMsg: "Essa é a verdade absoluta da minha vida! Escolha a opção certa!"
+            }
+        ];
+
+        let currentQuestion = 0;
+        let attempts = 1;
+        let loveCount = 100;
+
+        // Iniciar Jogo
+        function startGame() {
+            document.getElementById('screen-intro').classList.add('hidden');
+            document.getElementById('screen-quiz').classList.remove('hidden');
+            loadQuestion();
+        }
+
+        // Carregar Pergunta
+        function loadQuestion() {
+            const data = quizData[currentQuestion];
+            
+            // Atualizar cabeçalhos e progresso
+            document.getElementById('quiz-counter').innerText = `Pergunta ${currentQuestion + 1} de ${quizData.length}`;
+            document.getElementById('quiz-attempts').innerText = `Tentativa: ${attempts}`;
+            
+            // Cálculo da Porcentagem Romântica no Termômetro
+            const percent = Math.round((currentQuestion / quizData.length) * 100);
+            document.getElementById('love-percent-text').innerText = `${percent}%`;
+            document.getElementById('love-percent-bar').style.width = `${percent}%`;
+            
+            // Texto da Pergunta
+            document.getElementById('quiz-question').innerText = data.pergunta;
+            
+            // Resetar feedback
+            const feedback = document.getElementById('quiz-feedback');
+            feedback.innerText = "";
+            feedback.className = "text-xs md:text-sm font-bold h-10 flex items-center justify-center transition-all text-gray-500";
+
+            // Opções de botões
+            const optionsContainer = document.getElementById('quiz-options');
+            optionsContainer.innerHTML = "";
+            
+            data.opcoes.forEach((opcao, index) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full bg-rose-50 hover:bg-rose-100 border-2 border-rose-300 text-rose-700 font-semibold py-2.5 px-4 rounded-2xl text-xs md:text-sm transition transform hover:-translate-y-0.5 active:translate-y-0 text-left flex items-center justify-between";
+                btn.innerHTML = `<span>${opcao}</span> <span class="opacity-0 transition group-hover:opacity-100">💞</span>`;
+                btn.onclick = () => checkAnswer(index, btn);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        // Verificar Resposta
+        function checkAnswer(selectedIndex, clickedBtn) {
+            const data = quizData[currentQuestion];
+            const feedback = document.getElementById('quiz-feedback');
+            const allButtons = document.querySelectorAll('#quiz-options button');
+
+            allButtons.forEach(b => b.disabled = true);
+
+            if (selectedIndex === data.correta) {
+                triggerBigHeartExplosion();
+                feedback.innerText = data.certaMsg;
+                feedback.className = "text-xs md:text-sm font-bold h-10 flex items-center justify-center text-emerald-600 pop-animation";
+                
+                clickedBtn.classList.remove('bg-rose-50', 'border-rose-300', 'text-rose-700');
+                clickedBtn.classList.add('bg-emerald-100', 'border-emerald-500', 'text-emerald-800');
+
+                // Passa para a próxima pergunta
+                setTimeout(() => {
+                    currentQuestion++;
+                    attempts = 1;
+                    if (currentQuestion < quizData.length) {
+                        loadQuestion();
+                    } else {
+                        showVictory();
+                    }
+                }, 2800);
+            } else {
+                feedback.innerText = data.erradaMsg;
+                feedback.className = "text-xs md:text-sm font-bold h-10 flex items-center justify-center text-rose-600 pop-animation";
+                
+                clickedBtn.classList.remove('bg-rose-50', 'border-rose-300', 'text-rose-700');
+                clickedBtn.classList.add('bg-red-100', 'border-rose-400', 'text-rose-600');
+                
+                setTimeout(() => {
+                    allButtons.forEach(b => {
+                        b.disabled = false;
+                        if (b.classList.contains('border-rose-400')) {
+                            b.classList.remove('bg-red-100', 'border-rose-400', 'text-rose-600');
+                            b.classList.add('bg-rose-50', 'border-rose-300', 'text-rose-700');
+                        }
+                    });
+                    attempts++;
+                    document.getElementById('quiz-attempts').innerText = `Tentativa: ${attempts}`;
+                }, 2000);
+            }
+        }
+
+        // Mostrar Vitória
+        function showVictory() {
+            document.getElementById('love-percent-text').innerText = "100%";
+            document.getElementById('love-percent-bar').style.width = "100%";
+            
+            document.getElementById('screen-quiz').classList.add('hidden');
+            document.getElementById('screen-victory').classList.remove('hidden');
+            
+            setInterval(() => {
+                createSingleHeart();
+            }, 300);
+        }
+
+        // Enviar mais amor
+        function sendMoreLove() {
+            loveCount += 100;
+            document.getElementById('love-counter-display').innerText = `${loveCount} Vezes ❤️`;
+            
+            for(let i = 0; i < 15; i++) {
+                createSingleHeart();
+            }
+        }
+
+        /* --- LÓGICA DE CORAÇÕES COM CSS PURO (Sem utilizar <canvas>) --- */
+        const container = document.getElementById('heart-container');
+        const emojis = ['❤️', '💖', '💘', '💕', '💗'];
+
+        function createSingleHeart(fromX, fromY) {
+            const heart = document.createElement('div');
+            heart.className = 'floating-heart';
+            heart.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+            
+            // Posição horizontal aleatória ou especificada
+            const xPos = fromX !== undefined ? fromX : Math.random() * 100;
+            heart.style.left = `${xPos}%`;
+            
+            // Posição vertical inicial
+            if (fromY !== undefined) {
+                heart.style.bottom = `${fromY}px`;
+            }
+
+            // Tamanho aleatório
+            const size = 15 + Math.random() * 20;
+            heart.style.fontSize = `${size}px`;
+
+            // Duração aleatória para subir
+            const duration = 4 + Math.random() * 4;
+            heart.style.animationDuration = `${duration}s`;
+
+            container.appendChild(heart);
+
+            // Remove o elemento após terminar a animação
+            setTimeout(() => {
+                heart.remove();
+            }, duration * 1000);
+        }
+
+        function triggerBigHeartExplosion() {
+            for(let i = 0; i < 15; i++) {
+                // Cria os corações saindo do centro da tela
+                createSingleHeart(40 + Math.random() * 20, 100 + Math.random() * 100);
+            }
+        }
+
+        // Cria corações continuamente no fundo
+        setInterval(() => {
+            const activeHearts = document.getElementsByClassName('floating-heart');
+            if (activeHearts.length < 30) {
+                createSingleHeart();
+            }
+        }, 800);
+    </script>
+</body>
+</html>
